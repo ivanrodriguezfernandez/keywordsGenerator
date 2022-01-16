@@ -11,6 +11,7 @@ import (
     "fmt"
     "net/http"
     "io/ioutil"
+    "net/url"
 )
 
 // ------------------------------
@@ -32,8 +33,9 @@ func fetchUrl(url string, chFailedUrls chan string , chIsFinished chan bool){
   fmt.Println("response status:", response.Status)
   defer response.Body.Close()
   body, err := ioutil.ReadAll(response.Body)
-  fmt.Printf("%s", body)
+  fmt.Println("Body for url", url)
 
+ fmt.Printf("%s", body)
   defer func(){
     chIsFinished <- true
   }()
@@ -45,10 +47,14 @@ func fetchUrl(url string, chFailedUrls chan string , chIsFinished chan bool){
 }
 
 func main() {
-    fmt.Println("Google!!");
+
+    baseUrl:= "https://www.google.com/complete/search"
+    search:= "configure  "
+
+    urlQueryX := "%s?q=%s&cp=16&client=gws-wiz&xssi=t&hl=es&authuser=0&psi=aJTiYfq6B4-WaK3vvaAP.1642239092017&dpr=1"
 
     urlsList := [1]string{
-    "https://www.google.com",
+        fmt.Sprintf(urlQueryX, baseUrl, url.QueryEscape(search)),
     }
 
     chFailedUrls:= make(chan string)
